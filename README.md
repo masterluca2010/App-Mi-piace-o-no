@@ -29,15 +29,11 @@ Se scansioni un prodotto che hai già valutato, l'app ti dice **"Già provato!"*
 2. Tocca il menu **⋮** in alto a destra, poi **"Installa app"** (oppure **"Aggiungi a schermata Home"**).
 3. Apri l'app dall'icona, tocca **Scansiona** e consenti l'uso della fotocamera.
 
-### Pubblicare l'app (una volta sola, gratis con GitHub Pages)
+### Indirizzo dell'app
 
-1. Unisci questo lavoro al branch `main`.
-2. Su GitHub apri **Settings → Pages**.
-3. In "Build and deployment" scegli **Source: Deploy from a branch**, poi **Branch: `main`** e cartella **`/ (root)`**, e premi **Save**.
-4. Dopo un paio di minuti l'app è online all'indirizzo
-   **https://masterluca2010.github.io/App-Mi-piace-o-no/**
+**https://masterluca2010.github.io/App-Mi-piace-o-no/**
 
-Gli aggiornamenti futuri arrivano da soli: basta riaprire l'app.
+L'app è pubblicata gratis con GitHub Pages. Ogni modifica al branch `main` viene copiata in automatico sul branch `gh-pages` (dal file `.github/workflows/pubblica.yml`) e va online in un paio di minuti: per avere l'ultima versione basta riaprire l'app.
 
 ## Struttura dei file
 

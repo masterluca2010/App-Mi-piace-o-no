@@ -1,0 +1,18 @@
+# Ogni modifica su "main" viene copiata sul branch "gh-pages",
+# da cui GitHub Pages pubblica l'app (gratis).
+name: Pubblica l'app
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  pubblica:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Copia main su gh-pages
+        run: git push --force origin HEAD:refs/heads/gh-pages
