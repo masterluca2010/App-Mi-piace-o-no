@@ -1,0 +1,48 @@
+# Compila l'APK Android (gratis, sui computer di GitHub) e lo pubblica nelle "Releases".
+# Link diretto per scaricarlo:
+# https://github.com/masterluca2010/App-Mi-piace-o-no/releases/latest/download/mi-piace-o-no.apk
+name: Crea APK
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Prepara l'app web
+        run: |
+          npm ci
+          npm run sync
+      - name: Compila l'APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon
+          cp app/build/outputs/apk/release/app-release.apk ../mi-piace-o-no.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mi-piace-o-no-apk
+          path: mi-piace-o-no.apk
+      - name: Pubblica nelle Releases
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v1.0.${GITHUB_RUN_NUMBER}"
+          gh release create "$TAG" mi-piace-o-no.apk \
+            --title "Mi piace o no? ${TAG}" \
+            --notes "Scarica **mi-piace-o-no.apk** qui sotto e aprilo sul telefono per installarlo o aggiornarlo." \
+            --latest

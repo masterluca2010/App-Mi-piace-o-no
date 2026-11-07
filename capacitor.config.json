@@ -1,0 +1,13 @@
+{
+  "appId": "it.masterluca.mipiaceono",
+  "appName": "Mi piace o no?",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#16161d"
+  },
+  "plugins": {
+    "SystemBars": {
+      "style": "DARK"
+    }
+  }
+}
