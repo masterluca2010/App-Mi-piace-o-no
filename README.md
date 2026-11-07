@@ -23,17 +23,27 @@ Se scansioni un prodotto che hai già valutato, l'app ti dice **"Già provato!"*
 
 ## Installarla sul telefono (POCO / Android)
 
-È una **web app installabile** (PWA): si installa da Chrome, senza Play Store e senza file APK, e si apre a schermo intero come un'app normale, con la sua icona.
+### Opzione 1: APK (consigliata)
 
-1. Apri con **Chrome** l'indirizzo dell'app (vedi la sezione qui sotto).
-2. Tocca il menu **⋮** in alto a destra, poi **"Installa app"** (oppure **"Aggiungi a schermata Home"**).
-3. Apri l'app dall'icona, tocca **Scansiona** e consenti l'uso della fotocamera.
+1. Dal telefono apri questo link e scarica il file:
+   **https://github.com/masterluca2010/App-Mi-piace-o-no/releases/latest/download/mi-piace-o-no.apk**
+2. Apri il file scaricato. Android ti chiederà di **consentire l'installazione da questa fonte** (Chrome o Gestione file): consenti e torna indietro.
+3. Premi **Installa**. Se compare un avviso di Play Protect, scegli **Installa comunque**: l'app non viene dallo Play Store, ma è sicura.
+4. Apri l'app e consenti l'uso della **fotocamera**.
 
-### Indirizzo dell'app
+**Aggiornamenti**: quando c'è una versione nuova, scarica di nuovo l'APK dallo stesso link e installalo sopra. I tuoi prodotti restano dove sono.
 
-**https://masterluca2010.github.io/App-Mi-piace-o-no/**
+### Opzione 2: web app da Chrome
 
-L'app è pubblicata gratis con GitHub Pages. Ogni modifica al branch `main` viene copiata in automatico sul branch `gh-pages` (dal file `.github/workflows/pubblica.yml`) e va online in un paio di minuti: per avere l'ultima versione basta riaprire l'app.
+Apri **https://masterluca2010.github.io/App-Mi-piace-o-no/** con Chrome, poi tocca **⋮ → Installa app**. Si aggiorna da sola.
+
+> Le due versioni sono separate: i prodotti salvati in una non compaiono nell'altra. Per passarli dall'una all'altra usa backup e ripristino.
+
+### Come vengono pubblicate
+
+- **APK**: a ogni modifica di `main`, GitHub compila l'APK gratis (`.github/workflows/apk.yml`) e lo pubblica nelle *Releases*. L'app web viene inserita nell'APK con [Capacitor](https://capacitorjs.com) (cartella `android/`).
+- **Web app**: a ogni modifica di `main`, il codice viene copiato sul branch `gh-pages` (`.github/workflows/pubblica.yml`) e pubblicato con GitHub Pages.
+- La chiave di firma (`android/app/mipiace.keystore`) è inclusa nel progetto apposta: serve a far sì che ogni nuovo APK possa aggiornare quello già installato. Va bene per un'app personale installata a mano, ma non va usata per pubblicare l'app sul Play Store.
 
 ## Struttura dei file
 
@@ -43,6 +53,7 @@ L'app è pubblicata gratis con GitHub Pages. Ogni modifica al branch `main` vien
 | `app.js` | Scanner, ricerca dei prodotti, swipe, elenco, backup |
 | `db.js` | Archivio locale (IndexedDB) |
 | `sw.js`, `manifest.webmanifest`, `icons/` | Installazione e avvio rapido |
+| `android/`, `capacitor.config.json`, `package.json` | Progetto Android che crea l'APK |
 | `vendor/` | Lettore di codici a barre di riserva (open source, licenza MIT). Viene caricato solo se il telefono non ne ha uno integrato. |
 
 Per provarla sul computer: `python3 -m http.server` nella cartella del progetto, poi apri http://localhost:8000.

@@ -31,6 +31,9 @@ function toast(msg, actionLabel, action) {
   toastTimer = setTimeout(() => el.classList.remove('show'), actionLabel ? 5000 : 2500);
 }
 
+// true quando l'app gira come APK installato (Capacitor), false nel browser.
+const IS_APK = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+
 const vibrate = (ms) => { try { navigator.vibrate && navigator.vibrate(ms); } catch (_) {} };
 
 /* ================= Navigazione ================= */
@@ -478,8 +481,20 @@ $('#btn-menu-close').addEventListener('click', () => $('#menu').close());
 
 $('#btn-export').addEventListener('click', async () => {
   const all = await DB.all();
-  const blob = new Blob([JSON.stringify({ app: 'mi-piace-o-no', version: 1, exportedAt: new Date().toISOString(), products: all }, null, 1)], { type: 'application/json' });
+  const json = JSON.stringify({ app: 'mi-piace-o-no', version: 1, exportedAt: new Date().toISOString(), products: all }, null, 1);
   const name = `mipiace-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  // Nell'APK: salva il file e apre il menu "Condividi" di Android.
+  if (IS_APK) {
+    try {
+      const { Filesystem, Share } = window.Capacitor.Plugins;
+      const { uri } = await Filesystem.writeFile({ path: name, data: json, directory: 'CACHE', encoding: 'utf8' });
+      await Share.share({ title: 'Backup Mi piace o no', files: [uri] });
+    } catch (err) {
+      if (!/cancel/i.test(String(err && err.message))) toast('Non sono riuscito a creare il backup');
+    }
+    return;
+  }
+  const blob = new Blob([json], { type: 'application/json' });
   const file = new File([blob], name, { type: 'application/json' });
   // Su Android si apre il menu "Condividi" (Drive, email, WhatsApp…); altrimenti si scarica.
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -521,6 +536,6 @@ $('#file-import').addEventListener('change', async (e) => {
 /* ================= Avvio ================= */
 show('screen-home');
 
-if ('serviceWorker' in navigator) {
+if (!IS_APK && 'serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
