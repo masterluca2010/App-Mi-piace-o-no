@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mi piace o no?</title>
+  <meta name="description" content="Ricorda quali prodotti ti piacciono: scansiona il codice a barre e scorri.">
+  <meta name="theme-color" content="#16161d">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ===== HOME / ELENCO ===== -->
+  <section id="screen-home" class="screen active">
+    <header class="topbar">
+      <h1>Mi piace o no?</h1>
+      <button id="btn-menu" class="icon-btn" aria-label="Menu">⋮</button>
+    </header>
+
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="like" role="tab">👍 Mi piace <span class="count" id="count-like">0</span></button>
+      <button class="tab" data-tab="dislike" role="tab">👎 No <span class="count" id="count-dislike">0</span></button>
+      <button class="tab" data-tab="maybe" role="tab">🤔 Forse <span class="count" id="count-maybe">0</span></button>
+    </nav>
+
+    <div class="search-wrap">
+      <input id="search" type="search" placeholder="Cerca per nome, marca o codice…" autocomplete="off">
+    </div>
+
+    <ul id="list" class="list"></ul>
+    <p id="empty" class="empty hidden"></p>
+
+    <button id="btn-scan" class="fab" aria-label="Scansiona un prodotto">
+      <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path fill="currentColor" d="M3 5h2v14H3zm3 0h1v14H6zm2 0h2v14H8zm3 0h1v14h-1zm3 0h1v14h-1zm2 0h2v14h-2zm3 0h2v14h-2z"/></svg>
+      <span>Scansiona</span>
+    </button>
+  </section>
+
+  <!-- ===== SCANNER ===== -->
+  <section id="screen-scan" class="screen">
+    <video id="video" playsinline muted></video>
+    <div class="scan-overlay">
+      <div class="scan-frame"><div class="scan-line"></div></div>
+      <p class="scan-hint" id="scan-hint">Inquadra il codice a barre</p>
+    </div>
+    <div class="scan-actions">
+      <button id="btn-scan-close" class="pill">✕ Chiudi</button>
+      <button id="btn-torch" class="pill hidden">🔦 Luce</button>
+      <button id="btn-manual" class="pill">⌨️ Scrivi codice</button>
+    </div>
+  </section>
+
+  <!-- ===== SCHEDA PRODOTTO (SWIPE) ===== -->
+  <section id="screen-card" class="screen">
+    <header class="topbar">
+      <button id="btn-card-back" class="icon-btn" aria-label="Indietro">←</button>
+      <h1 id="card-title">Prodotto</h1>
+      <button id="btn-card-delete" class="icon-btn hidden" aria-label="Elimina">🗑</button>
+    </header>
+
+    <div id="known-banner" class="known-banner hidden"></div>
+
+    <div class="card-stage">
+      <article id="card" class="card">
+        <div class="stamp stamp-like">MI PIACE</div>
+        <div class="stamp stamp-dislike">NO</div>
+        <div class="stamp stamp-maybe">FORSE</div>
+        <div class="card-img-wrap"><img id="card-img" alt="" draggable="false"></div>
+        <div class="card-body">
+          <input id="card-name" class="card-name" placeholder="Nome del prodotto" autocomplete="off">
+          <input id="card-brand" class="card-brand" placeholder="Marca (facoltativa)" autocomplete="off">
+          <p class="card-code" id="card-code"></p>
+          <p class="card-status" id="card-status"></p>
+        </div>
+      </article>
+    </div>
+
+    <div class="vote-buttons">
+      <button class="vote vote-dislike" data-verdict="dislike" aria-label="Non mi piace">👎</button>
+      <button class="vote vote-maybe" data-verdict="maybe" aria-label="Forse">🤔</button>
+      <button class="vote vote-like" data-verdict="like" aria-label="Mi piace">👍</button>
+    </div>
+    <p class="swipe-help">← non mi piace · ↓ forse · mi piace →</p>
+  </section>
+
+  <!-- ===== MENU ===== -->
+  <dialog id="menu" class="sheet">
+    <h2>Menu</h2>
+    <button id="btn-export" class="sheet-btn">💾 Salva copia di backup</button>
+    <button id="btn-import" class="sheet-btn">📂 Ripristina da backup</button>
+    <input id="file-import" type="file" accept="application/json,.json" hidden>
+    <p class="sheet-info" id="stats"></p>
+    <p class="sheet-info">I dati restano solo su questo telefono. Ogni tanto fai un backup, così non li perdi se cambi telefono o cancelli i dati del browser.<br>Le informazioni sui prodotti arrivano da <b>Open Food Facts</b>, un database libero e gratuito.</p>
+    <button id="btn-menu-close" class="sheet-btn secondary">Chiudi</button>
+  </dialog>
+
+  <!-- ===== CODICE MANUALE ===== -->
+  <dialog id="manual" class="sheet">
+    <h2>Scrivi il codice</h2>
+    <form id="manual-form" method="dialog">
+      <input id="manual-code" inputmode="numeric" pattern="[0-9]{6,14}" placeholder="es. 8001234567890" required>
+      <div class="row">
+        <button type="button" id="btn-manual-cancel" class="sheet-btn secondary">Annulla</button>
+        <button type="submit" class="sheet-btn">Cerca</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
